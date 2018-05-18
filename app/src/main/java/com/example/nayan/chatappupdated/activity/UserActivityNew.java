@@ -63,18 +63,26 @@ public class UserActivityNew extends AppCompatActivity {
     }
 
     private void prepareDis() {
-
         mFirestore.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                 for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-                    if (doc.getType() == DocumentChange.Type.ADDED) {
+                    User user = doc.getDocument().toObject(User.class);
 
-                        String userId = doc.getDocument().getId();
-                        User user = doc.getDocument().toObject(User.class);
+                    if (doc.getType() == DocumentChange.Type.ADDED) {
                         users.add(user);
                         adapter.notifyDataSetChanged();
+                    } else if (doc.getType() == DocumentChange.Type.MODIFIED) {
+
+                        for (int i = 0; i < users.size(); i++) {
+                            if (users.get(i).tokenId.equals(user.tokenId)) {
+                                users.set(i, user);
+                                adapter.notifyItemChanged(i);
+                                break;
+                            }
+                        }
+
                     }
                 }
 

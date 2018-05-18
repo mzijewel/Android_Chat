@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.model.User;
-import com.example.nayan.chatappupdated.tools.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     public void onBindViewHolder(MyViewHolder holder, int position) {
         User user = users.get(position);
         holder.tvName.setText(user.name);
-        Utils.log("name:"+user.name);
+
         if (user.online.equals("true"))
             holder.imgStatus.setImageResource(R.drawable.online_icon);
         else
