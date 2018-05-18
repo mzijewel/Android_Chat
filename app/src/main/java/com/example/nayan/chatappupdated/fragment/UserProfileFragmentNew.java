@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -23,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.model.Configuration;
@@ -31,7 +28,6 @@ import com.example.nayan.chatappupdated.model.User;
 import com.example.nayan.chatappupdated.service.ServiceUtils;
 import com.example.nayan.chatappupdated.tools.ImageUtils;
 import com.example.nayan.chatappupdated.tools.SharedPreferenceHelper;
-import com.example.nayan.chatappupdated.tools.StaticConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -39,7 +35,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
@@ -114,9 +109,10 @@ public class UserProfileFragmentNew extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        userDB = FirebaseDatabase.getInstance().getReference().child("user").child(StaticConfig.UID);
-        userDB.addListenerForSingleValueEvent(userListener);
-        mAuth = FirebaseAuth.getInstance();
+
+//        userDB = FirebaseDatabase.getInstance().getReference().child("user").child(StaticConfig.UID);
+//        userDB.addListenerForSingleValueEvent(userListener);
+//        mAuth = FirebaseAuth.getInstance();
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_info, container, false);
@@ -125,20 +121,20 @@ public class UserProfileFragmentNew extends Fragment {
         avatar.setOnClickListener(onAvatarClick);
         tvUserName = (TextView)view.findViewById(R.id.tv_username);
 
-        SharedPreferenceHelper prefHelper = SharedPreferenceHelper.getInstance(context);
-        myAccount = prefHelper.getUserInfo();
-        setupArrayListInfo(myAccount);
-        setImageAvatar(context, myAccount.avata);
-        tvUserName.setText(myAccount.name);
+//        SharedPreferenceHelper prefHelper = SharedPreferenceHelper.getInstance(context);
+//        myAccount = prefHelper.getUserInfo();
+//        setupArrayListInfo(myAccount);
+//        setImageAvatar(context, myAccount.avata);
+//        tvUserName.setText(myAccount.name);
 
-        recyclerView = (RecyclerView)view.findViewById(R.id.info_recycler_view);
-        infoAdapter = new UserInfoAdapter(listConfig);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(infoAdapter);
-
-        waitingDialog = new LovelyProgressDialog(context);
+//        recyclerView = (RecyclerView)view.findViewById(R.id.info_recycler_view);
+//        infoAdapter = new UserInfoAdapter(listConfig);
+//        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+//        recyclerView.setLayoutManager(layoutManager);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(infoAdapter);
+//
+//        waitingDialog = new LovelyProgressDialog(context);
         return view;
     }
 

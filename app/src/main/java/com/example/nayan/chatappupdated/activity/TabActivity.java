@@ -9,20 +9,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.fragment.FriendsFragmentNew;
 import com.example.nayan.chatappupdated.fragment.UserProfileFragmentNew;
-import com.example.nayan.chatappupdated.service.FirebaseMsgService;
 import com.example.nayan.chatappupdated.service.ServiceUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,11 +49,6 @@ public class TabActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_activity);
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        FirebaseMsgService firebaseMessagingService = new FirebaseMsgService();
-        firebaseMessagingService.onCreate();
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.e("Token", " " + token);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,6 +60,7 @@ public class TabActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         initTab();
         initFirebase();
+
     }
 
 
@@ -76,30 +68,30 @@ public class TabActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
+        if (mAuth.getCurrentUser() == null) {
+            startActivity(new Intent(this, LoginActivityNew.class));
+            finish();
+        } else {
+            online();
+        }
 
+
+    }
+
+    private void online() {
         mUserId = mAuth.getCurrentUser().getUid();
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("online", "true");
         mFirestore.collection("Users").document(mUserId).update(userMap);
-
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void offline() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             Map<String, Object> userMap = new HashMap<>();
             userMap.put("online", "false");
+
             mFirestore.collection("Users").document(mUserId).update(userMap);
 
         }
@@ -107,7 +99,7 @@ public class TabActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        ServiceUtils.startServiceFriendChat(getApplicationContext());
+        offline();
         super.onDestroy();
     }
 
