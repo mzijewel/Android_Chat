@@ -1,0 +1,107 @@
+{
+  "project_info": {
+    "project_number": "190702864504",
+    "firebase_url": "https://fcmsample-24cc2.firebaseio.com",
+    "project_id": "fcmsample-24cc2",
+    "storage_bucket": "fcmsample-24cc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190702864504:android:63b223acbc8a34f0",
+        "android_client_info": {
+          "package_name": "com.example.nayan.chatappupdated"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190702864504-tr5e3m637hcv6ifo4rs4ao5b16vejhhs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nayan.chatappupdated",
+            "certificate_hash": "3b9265f4d0fd9d0ceea07b925993835c5c4ffaf7"
+          }
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRqmywGfxUK-3OuS5IXNKEmDcdyga-QBw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190702864504:android:d6c546b330bca158",
+        "android_client_info": {
+          "package_name": "mydictionary.techienerdbd.com.fcm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190702864504-0n6u07c35qc4kbp5mu0qc21vj4eiahug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mydictionary.techienerdbd.com.fcm",
+            "certificate_hash": "3b9265f4d0fd9d0ceea07b925993835c5c4ffaf7"
+          }
+        },
+        {
+          "client_id": "190702864504-gjdfipa9ofedh805us3cqfd3g18c92cg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mydictionary.techienerdbd.com.fcm",
+            "certificate_hash": "7e6614cc0bc4cfd0922c4a45b62ec664e3d31d30"
+          }
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRqmywGfxUK-3OuS5IXNKEmDcdyga-QBw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
