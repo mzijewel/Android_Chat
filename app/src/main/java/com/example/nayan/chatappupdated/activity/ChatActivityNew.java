@@ -33,7 +33,9 @@ import com.example.nayan.chatappupdated.emoji.EmojiconsPopup;
 import com.example.nayan.chatappupdated.model.MessageNew2;
 import com.example.nayan.chatappupdated.tools.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
@@ -410,7 +412,7 @@ public class ChatActivityNew extends AppCompatActivity {
 
                 itemPos = 0;
 
-                loadMessages();
+                checkUpcoming();
 
 
             }
@@ -462,29 +464,46 @@ public class ChatActivityNew extends AppCompatActivity {
 
     }
 
+    private void checkUpcoming() {
 
+        Task task1 = mFirestore.collection("messages")
+                .whereEqualTo("from", fromUser)
+                .whereEqualTo("to", "a")
+                .get();
+        Task task2 = mFirestore.collection("messages").whereEqualTo("to", fromUser).whereEqualTo("from", "a").get();
+
+        Task<List<QuerySnapshot>> all = Tasks.whenAllSuccess(task1, task2);
+        all.addOnSuccessListener(new OnSuccessListener<List<QuerySnapshot>>() {
+            @Override
+            public void onSuccess(List<QuerySnapshot> querySnapshots) {
+                messagesList.clear();
+                for (QuerySnapshot querySnapshotDoc : querySnapshots)
+                    for (DocumentChange doc : querySnapshotDoc.getDocumentChanges()) {
+                        if (doc.getType() == DocumentChange.Type.ADDED) {
+                            MessageNew2 message = doc.getDocument().toObject(MessageNew2.class);
+                            messagesList.add(message);
+                            mAdapter.notifyDataSetChanged();
+                        }
+
+
+                    }
+            }
+        });
+        mRefreshLayout.setRefreshing(false);
+        mLinearLayout.scrollToPositionWithOffset(messagesList.size(), 0);
+    }
 
     private void loadMessages() {
         messagesList.clear();
         fromUser = "jewel";
 
-        mFirestore.collection("mesages")
-                .whereEqualTo("from", fromUser)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
-                            if (doc.getType() == DocumentChange.Type.ADDED) {
-                                MessageNew2 message = doc.getDocument().toObject(MessageNew2.class);
-                                messagesList.add(message);
-                                mAdapter.notifyDataSetChanged();
-                            }
-
-
-                        }
-                    }
-                });
+        mFirestore.collection("messages").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                checkUpcoming();
+            }
+        });
 
 
         mRefreshLayout.setRefreshing(false);
