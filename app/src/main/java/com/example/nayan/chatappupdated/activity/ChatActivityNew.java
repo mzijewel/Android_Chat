@@ -3,7 +3,6 @@ package com.example.nayan.chatappupdated.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -32,23 +30,21 @@ import com.example.nayan.chatappupdated.emoji.Emojicon;
 import com.example.nayan.chatappupdated.emoji.EmojiconEditText;
 import com.example.nayan.chatappupdated.emoji.EmojiconGridView;
 import com.example.nayan.chatappupdated.emoji.EmojiconsPopup;
-import com.example.nayan.chatappupdated.model.GetTimeAgo;
 import com.example.nayan.chatappupdated.model.MessageNew2;
-import com.example.nayan.chatappupdated.tools.StaticConfig;
 import com.example.nayan.chatappupdated.tools.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
@@ -65,62 +61,51 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class ChatActivityNew extends AppCompatActivity {
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private static final int GALLERY_PICK = 1;
     public static String userName;
     public static String mChatUser;
     public static String mCurrentUserId;
+    private final List<MessageNew2> messagesList = new ArrayList<>();
+    public Bitmap bitmapAvataUser;
+    FirebaseAnalytics firebaseAnalytics;
     private Toolbar mChatToolbar;
-
     private DatabaseReference mRootRef;
-
     private TextView mTitleView;
+    //    private EditText mChatMessageView;
     private TextView mLastSeenView;
     private CircleImageView customBarImage;
     private FirebaseAuth mAuth;
-
-
     private ImageView mChatAddBtn;
     private ImageView mChatSendBtn;
-//    private EditText mChatMessageView;
-
     private RecyclerView mMessagesList;
     private SwipeRefreshLayout mRefreshLayout;
-
-    private final List<MessageNew2> messagesList = new ArrayList<>();
     private LinearLayoutManager mLinearLayout;
     private MessageAdapter mAdapter;
-
-    private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int mCurrentPage = 1;
-
-    private static final int GALLERY_PICK = 1;
-
     // Storage Firebase
     private StorageReference mImageStorage;
-
-
     //New Solution
     private int itemPos = 0;
 
+    //Analytics
     private String mLastKey = "";
     private String mPrevKey = "";
-
-    //Analytics
-
-    FirebaseAnalytics firebaseAnalytics;
-
     private String temp;
-
     private ImageView imgSelect;
-    public Bitmap bitmapAvataUser;
     private String email;
     private EmojiconEditText mChatMessageView;
     private ImageView emojiButton, submitButton;
+    private FirebaseFirestore mFirestore;
+    private String mUserId, fromUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_new);
 
+        mFirestore = FirebaseFirestore.getInstance();
+        mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_message_view);
         emojiButton = (ImageView) findViewById(R.id.emoji_btn);
         final View rootView = findViewById(R.id.root_view);
@@ -224,7 +209,7 @@ public class ChatActivityNew extends AppCompatActivity {
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         firebaseAnalytics.setCurrentScreen(this, "ChatAct", " acticity");
         firebaseAnalytics.setUserProperty("nayan", "nayan");
-        analytics("one", "chatactivity");
+//        analytics("one", "chatactivity");
 
         mChatToolbar = (Toolbar) findViewById(R.id.chat_app_bar);
         setSupportActionBar(mChatToolbar);
@@ -238,7 +223,7 @@ public class ChatActivityNew extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
 
-        mChatUser = getIntent().getStringExtra("user_id");
+        fromUser = getIntent().getStringExtra("fromUser");
         String userName = getIntent().getStringExtra("user_name");
         email = getIntent().getStringExtra("email");
 
@@ -305,95 +290,91 @@ public class ChatActivityNew extends AppCompatActivity {
 
         mMessagesList.setAdapter(mAdapter);
 
-        //------- IMAGE STORAGE ---------
-        mImageStorage = FirebaseStorage.getInstance().getReference();
-
-        mRootRef.child("Chat").child(mCurrentUserId).child(mChatUser).child("seen").setValue(true);
 
         loadMessages();
 
 
         mTitleView.setText(userName);
 
-        mRootRef.child("user").child(mChatUser).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+//        mRootRef.child("user").child(mChatUser).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                String online = dataSnapshot.child("online").getValue().toString();
+//                String image = dataSnapshot.child("avatar").getValue().toString();
+//
+//                if (!image.equals(StaticConfig.STR_DEFAULT_BASE64)) {
+//                    byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
+//                    bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                } else {
+//                    bitmapAvataUser = null;
+//                }
+//
+//                if (bitmapAvataUser != null) {
+//                    customBarImage.setImageBitmap(bitmapAvataUser);
+//                }
+//
+//                if (online.equals("true")) {
+//
+//                    mLastSeenView.setText("Online");
+//
+//                } else {
+//
+//                    GetTimeAgo getTimeAgo = new GetTimeAgo();
+//
+//                    long lastTime = Long.parseLong(online);
+//
+//                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
+//
+//                    mLastSeenView.setText(lastSeenTime);
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
-                String online = dataSnapshot.child("online").getValue().toString();
-                String image = dataSnapshot.child("avatar").getValue().toString();
 
-                if (!image.equals(StaticConfig.STR_DEFAULT_BASE64)) {
-                    byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
-                    bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                } else {
-                    bitmapAvataUser = null;
-                }
-
-                if (bitmapAvataUser != null) {
-                    customBarImage.setImageBitmap(bitmapAvataUser);
-                }
-
-                if (online.equals("true")) {
-
-                    mLastSeenView.setText("Online");
-
-                } else {
-
-                    GetTimeAgo getTimeAgo = new GetTimeAgo();
-
-                    long lastTime = Long.parseLong(online);
-
-                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
-
-                    mLastSeenView.setText(lastSeenTime);
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (!dataSnapshot.hasChild(mChatUser)) {
-
-                    Map chatAddMap = new HashMap();
-                    chatAddMap.put("seen", false);
-                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
-
-                    Map chatUserMap = new HashMap();
-                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUser, chatAddMap);
-                    chatUserMap.put("Chat/" + mChatUser + "/" + mCurrentUserId, chatAddMap);
-
-                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
-                            if (databaseError != null) {
-
-                                Log.d("CHAT_LOG", databaseError.getMessage().toString());
-
-                            }
-
-                        }
-                    });
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                if (!dataSnapshot.hasChild(mChatUser)) {
+//
+//                    Map chatAddMap = new HashMap();
+//                    chatAddMap.put("seen", false);
+//                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
+//
+//                    Map chatUserMap = new HashMap();
+//                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUser, chatAddMap);
+//                    chatUserMap.put("Chat/" + mChatUser + "/" + mCurrentUserId, chatAddMap);
+//
+//                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
+//                        @Override
+//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//
+//                            if (databaseError != null) {
+//
+//                                Log.d("CHAT_LOG", databaseError.getMessage().toString());
+//
+//                            }
+//
+//                        }
+//                    });
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
 
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
@@ -429,7 +410,7 @@ public class ChatActivityNew extends AppCompatActivity {
 
                 itemPos = 0;
 
-                loadMoreMessages();
+                loadMessages();
 
 
             }
@@ -481,240 +462,84 @@ public class ChatActivityNew extends AppCompatActivity {
 
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == GALLERY_PICK && resultCode == Activity.RESULT_OK) {
-//            if (data == null) {
-//                return;
-//            }
-//            try {
-//                final Uri selectedImage = data.getData();
-//                InputStream inputStream = ChatActivityNew.this.getContentResolver().openInputStream(data.getData());
-//
-//                Bitmap imgBitmap = BitmapFactory.decodeStream(inputStream);
-//                imgBitmap = ImageUtils.cropToSquare(imgBitmap);
-//                InputStream is = ImageUtils.convertBitmapToInputStream(imgBitmap);
-//                final Bitmap liteImage = ImageUtils.makeImageLite(is,
-//                        imgBitmap.getWidth(), imgBitmap.getHeight(),
-//                        ImageUtils.AVATAR_WIDTH, ImageUtils.AVATAR_HEIGHT);
-//
-//                String imageBase64 = ImageUtils.encodeBase64(liteImage);
-//                Bitmap bitmapAvataUser;
-//                byte[] decodedString = Base64.decode(String.valueOf(selectedImage), Base64.DEFAULT);
-//                bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//                imgSelect.setImageBitmap(bitmapAvataUser);
-//                temp = imageBase64;
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == GALLERY_PICK && resultCode == Activity.RESULT_OK) {
-//            if (data == null) {
-//                return;
-//            }
-//            try {
-//                InputStream inputStream = ChatActivityNew.this.getContentResolver().openInputStream(data.getData());
-//
-//                Bitmap imgBitmap = BitmapFactory.decodeStream(inputStream);
-//                imgBitmap = ImageUtils.cropToSquare(imgBitmap);
-//                InputStream is = ImageUtils.convertBitmapToInputStream(imgBitmap);
-//                final Bitmap liteImage = ImageUtils.makeImageLite(is,
-//                        imgBitmap.getWidth(), imgBitmap.getHeight(),
-//                        ImageUtils.AVATAR_WIDTH, ImageUtils.AVATAR_HEIGHT);
-//
-//                final String imageBase64 = ImageUtils.encodeBase64(liteImage);
-//
-//                StorageReference filepath = mImageStorage.child("message_images").child(Utils.getToday() + ".jpg");
-//
-//                filepath.putFile(Uri.parse(imageBase64)).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//
-//                        if (task.isSuccessful()) {
-//                            Toast.makeText(ChatActivityNew.this, "success", Toast.LENGTH_SHORT).show();
-//                            Bitmap bitmapAvataUser;
-//                            byte[] decodedString = Base64.decode(imageBase64, Base64.DEFAULT);
-//                            bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//                            imgSelect.setImageBitmap(bitmapAvataUser);
-//
-//                            temp = imageBase64;
-//                            imgSelect.setVisibility(View.VISIBLE);
-////                        imgSelect.setImageURI(selectedImage);
-//
-////                        Picasso.with(ChatActivityNew.this).load(download_url)
-////                                .placeholder(R.drawable.default_avata).into(imgSelect);
-//
-//                        }
-//
-//                    }
-//                });
-//
-//
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-////        if (requestCode == GALLERY_PICK && resultCode == Activity.RESULT_OK) {
-////            if (data != null) {
-////                final Uri selectedImage = data.getData();
-////                StorageReference filepath = mImageStorage.child("message_images").child(Utils.getToday() + ".jpg");
-////
-////                filepath.putFile(selectedImage).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-////                    @Override
-////                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-////
-////                        if (task.isSuccessful()) {
-////                            Toast.makeText(ChatActivityNew.this, "success", Toast.LENGTH_SHORT).show();
-////                            Bitmap bitmapAvataUser;
-////                            String download_url = task.getResult().getDownloadUrl().toString();
-////
-//////                            byte[] decodedString = Base64.decode(download_url, Base64.DEFAULT);
-//////                            bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//////                            imgSelect.setImageBitmap(bitmapAvataUser);
-////
-////                            temp = download_url;
-////                            imgSelect.setVisibility(View.VISIBLE);
-////                        imgSelect.setImageURI(selectedImage);
-////
-//////                        Picasso.with(ChatActivityNew.this).load(download_url)
-//////                                .placeholder(R.drawable.default_avata).into(imgSelect);
-////
-////                        }
-////
-////                    }
-////                });
-////
-////            }
-////        }
-//
-//    }
-
-    private void loadMoreMessages() {
-
-        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-
-        Query messageQuery = messageRef.orderByKey().endAt(mLastKey).limitToLast(10);
-
-        messageQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-
-                MessageNew2 message = dataSnapshot.getValue(MessageNew2.class);
-                String messageKey = dataSnapshot.getKey();
-
-                if (!mPrevKey.equals(messageKey)) {
-
-                    messagesList.add(itemPos++, message);
-
-                } else {
-
-                    mPrevKey = mLastKey;
-
-                }
-
-
-                if (itemPos == 1) {
-
-                    mLastKey = messageKey;
-
-                }
-
-
-                Log.d("TOTALKEYS", "Last Key : " + mLastKey + " | Prev Key : " + mPrevKey + " | Message Key : " + messageKey);
-
-                mAdapter.notifyDataSetChanged();
-
-                mRefreshLayout.setRefreshing(false);
-
-                mLinearLayout.scrollToPositionWithOffset(10, 0);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
     private void loadMessages() {
+        messagesList.clear();
+        fromUser = "jewel";
 
-        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
+        mFirestore.collection("mesages")
+                .whereEqualTo("from", fromUser)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
-        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+                        for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
+                            if (doc.getType() == DocumentChange.Type.ADDED) {
+                                MessageNew2 message = doc.getDocument().toObject(MessageNew2.class);
+                                messagesList.add(message);
+                                mAdapter.notifyDataSetChanged();
+                            }
 
 
-        messageQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        }
+                    }
+                });
 
-                MessageNew2 message = dataSnapshot.getValue(MessageNew2.class);
 
-                itemPos++;
-
-                if (itemPos == 1) {
-
-                    String messageKey = dataSnapshot.getKey();
-
-                    mLastKey = messageKey;
-                    mPrevKey = messageKey;
-
-                }
-
-                messagesList.add(message);
-                mAdapter.notifyDataSetChanged();
-
-                mMessagesList.scrollToPosition(messagesList.size() - 1);
+        mRefreshLayout.setRefreshing(false);
+        mLinearLayout.scrollToPositionWithOffset(messagesList.size(), 0);
+//        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
+//
+//        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
+//
+//
+//        messageQuery.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//
+//                MessageNew2 message = dataSnapshot.getValue(MessageNew2.class);
+//
+//                itemPos++;
+//
+//                if (itemPos == 1) {
+//
+//                    String messageKey = dataSnapshot.getKey();
+//
+//                    mLastKey = messageKey;
+//                    mPrevKey = messageKey;
+//
+//                }
+//
+//                messagesList.add(message);
+//                mAdapter.notifyDataSetChanged();
+//
+//                mMessagesList.scrollToPosition(messagesList.size() - 1);
 
 //                mRefreshLayout.setRefreshing(false);
 
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
     }
 

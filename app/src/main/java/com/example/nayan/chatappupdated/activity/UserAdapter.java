@@ -1,6 +1,7 @@
 package com.example.nayan.chatappupdated.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
             tvName = itemView.findViewById(R.id.user_single_name);
             imgProfile = itemView.findViewById(R.id.user_single_image);
             imgStatus = itemView.findViewById(R.id.user_single_online_icon);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mContext.startActivity(new Intent(mContext, ChatActivityNew.class));
+                }
+            });
         }
     }
 }
