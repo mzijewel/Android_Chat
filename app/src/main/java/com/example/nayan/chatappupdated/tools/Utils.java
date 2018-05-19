@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.activity.TabActivity;
@@ -65,5 +66,9 @@ public class Utils {
 
     public static void log(String s) {
         Log.e("CHAT", s);
+    }
+
+    public static void showTost(String msg) {
+        Toast.makeText(MainApplication.getInstance().getContext(), msg, Toast.LENGTH_LONG).show();
     }
 }
