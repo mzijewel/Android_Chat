@@ -40,7 +40,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
             holder.imgStatus.setImageResource(R.drawable.online_icon);
         else
             holder.imgStatus.setVisibility(View.GONE);
-        Picasso.with(mContext).load(user.avata).placeholder(R.drawable.default_avata).into(holder.imgProfile);
+        Picasso.with(mContext).load(user.avatar).placeholder(R.drawable.default_avata).into(holder.imgProfile);
 
     }
 

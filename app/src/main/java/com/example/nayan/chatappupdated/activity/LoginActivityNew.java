@@ -387,7 +387,7 @@ public class LoginActivityNew extends AppCompatActivity {
                     userInfo.tokenId = (String) hashUser.get("tokenId");
                     userInfo.name = (String) hashUser.get("name");
                     userInfo.email = (String) hashUser.get("email");
-                    userInfo.avata = (String) hashUser.get("avata");
+                    userInfo.avatar = (String) hashUser.get("avatar");
                     SharedPreferenceHelper.getInstance(LoginActivityNew.this).saveUserInfo(userInfo);
                 }
 
@@ -407,7 +407,7 @@ public class LoginActivityNew extends AppCompatActivity {
             newUser.online = "Hi there I'm using Chat App.";
             newUser.tokenId = device_token;
             newUser.name = user.getEmail().substring(0, user.getEmail().indexOf("@"));
-            newUser.avata = StaticConfig.STR_DEFAULT_BASE64;
+            newUser.avatar = StaticConfig.STR_DEFAULT_BASE64;
             FirebaseDatabase.getInstance().getReference().child("user/" + user.getUid()).setValue(newUser);
 
 //            FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
@@ -421,7 +421,7 @@ public class LoginActivityNew extends AppCompatActivity {
 //            userMap.put("status_one", "Hi there I'm using Chat App.");
 //            userMap.put("email", user.getEmail());
 //            userMap.put("image", "default");
-//            userMap.put("avata", StaticConfig.STR_DEFAULT_BASE64);
+//            userMap.put("avatar", StaticConfig.STR_DEFAULT_BASE64);
 //            userMap.put("thumb_image", "default");
 //            userMap.put("device_token", device_token);
 //

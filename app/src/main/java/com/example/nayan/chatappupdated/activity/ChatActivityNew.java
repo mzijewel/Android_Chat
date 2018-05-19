@@ -1,6 +1,5 @@
 package com.example.nayan.chatappupdated.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,10 +7,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.text.emoji.EmojiCompat;
-import android.support.text.emoji.FontRequestEmojiCompatConfig;
-import android.support.text.emoji.bundled.BundledEmojiCompatConfig;
-import android.support.v4.provider.FontRequest;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,12 +22,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.adapter.MessageAdapter;
@@ -42,12 +34,9 @@ import com.example.nayan.chatappupdated.emoji.EmojiconGridView;
 import com.example.nayan.chatappupdated.emoji.EmojiconsPopup;
 import com.example.nayan.chatappupdated.model.GetTimeAgo;
 import com.example.nayan.chatappupdated.model.MessageNew2;
-import com.example.nayan.chatappupdated.tools.ImageUtils;
-import com.example.nayan.chatappupdated.tools.SharedPreferenceHelper;
 import com.example.nayan.chatappupdated.tools.StaticConfig;
 import com.example.nayan.chatappupdated.tools.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,13 +52,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -336,7 +320,7 @@ public class ChatActivityNew extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 String online = dataSnapshot.child("online").getValue().toString();
-                String image = dataSnapshot.child("avata").getValue().toString();
+                String image = dataSnapshot.child("avatar").getValue().toString();
 
                 if (!image.equals(StaticConfig.STR_DEFAULT_BASE64)) {
                     byte[] decodedString = Base64.decode(image, Base64.DEFAULT);

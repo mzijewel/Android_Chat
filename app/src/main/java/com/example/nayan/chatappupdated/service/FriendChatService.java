@@ -28,7 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -116,8 +115,8 @@ public class FriendChatService extends Service {
                             if (mapMark.get(friend.idRoom) != null && mapMark.get(friend.idRoom)) {
 //                                Toast.makeText(FriendChatService.this, friend.name + ": " + ((HashMap)dataSnapshot.getValue()).get("text"), Toast.LENGTH_SHORT).show();
                                 if (mapBitmap.get(friend.idRoom) == null) {
-                                    if (!friend.avata.equals(StaticConfig.STR_DEFAULT_BASE64)) {
-                                        byte[] decodedString = Base64.decode(friend.avata, Base64.DEFAULT);
+                                    if (!friend.avatar.equals(StaticConfig.STR_DEFAULT_BASE64)) {
+                                        byte[] decodedString = Base64.decode(friend.avatar, Base64.DEFAULT);
                                         mapBitmap.put(friend.idRoom, BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length));
                                     } else {
                                         mapBitmap.put(friend.idRoom, BitmapFactory.decodeResource(getResources(), R.drawable.default_avata));

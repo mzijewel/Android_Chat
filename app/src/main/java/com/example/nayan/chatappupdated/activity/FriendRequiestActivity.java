@@ -1,13 +1,11 @@
 package com.example.nayan.chatappupdated.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -90,7 +88,7 @@ public class FriendRequiestActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         final String userName = dataSnapshot.child("name").getValue().toString();
-                                        final String userThumb = dataSnapshot.child("avata").getValue().toString();
+                                        final String userThumb = dataSnapshot.child("avatar").getValue().toString();
                                         final String email = dataSnapshot.child("email").getValue().toString();
 
 

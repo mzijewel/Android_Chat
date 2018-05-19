@@ -11,7 +11,7 @@ public class User {
     public String name;
     public String email;
     public String online;
-    public String avata;
+    public String avatar;
     public String tokenId;
     public Status status;
     public Message2 message;

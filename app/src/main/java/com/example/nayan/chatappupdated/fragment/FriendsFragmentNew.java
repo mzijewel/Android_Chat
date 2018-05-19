@@ -1,13 +1,11 @@
 package com.example.nayan.chatappupdated.fragment;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.activity.ChatActivityNew;
-import com.example.nayan.chatappupdated.activity.ProfileActivity;
 import com.example.nayan.chatappupdated.model.Friends;
 import com.example.nayan.chatappupdated.tools.StaticConfig;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -30,7 +27,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,7 +142,7 @@ public class FriendsFragmentNew extends Fragment {
 
                         } else {
                             final String userName = dataSnapshot.child("name").getValue().toString();
-                            final String userThumb = dataSnapshot.child("avata").getValue().toString();
+                            final String userThumb = dataSnapshot.child("avatar").getValue().toString();
                             final String email = dataSnapshot.child("email").getValue().toString();
 
                             if (dataSnapshot.hasChild("online")) {

@@ -1,18 +1,11 @@
 package com.example.nayan.chatappupdated.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
-
-/**
- * Created by ASUS on 1/31/2018.
- */
-
-import android.app.ProgressDialog;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +17,6 @@ import android.widget.Toast;
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.tools.StaticConfig;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,15 +24,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
-import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+
+/**
+ * Created by ASUS on 1/31/2018.
+ */
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -146,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 String display_name = dataSnapshot.child("name").getValue().toString();
                 String status = dataSnapshot.child("online").getValue().toString();
-                String image = dataSnapshot.child("avata").getValue().toString();
+                String image = dataSnapshot.child("avatar").getValue().toString();
 
 
                 if (!image.equals(StaticConfig.STR_DEFAULT_BASE64)) {

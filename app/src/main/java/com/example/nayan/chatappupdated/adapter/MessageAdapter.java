@@ -3,7 +3,6 @@ package com.example.nayan.chatappupdated.adapter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -102,7 +101,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DateFormat dateFormat = android.text.format.DateFormat.getTimeFormat(MainApplication.getInstance().getContext());
                 String name = dataSnapshot.child("name").getValue().toString();
-                String image = dataSnapshot.child("avata").getValue().toString();
+                String image = dataSnapshot.child("avatar").getValue().toString();
                 Log.e("cun " + name, " fun " + ChatActivityNew.userName);
 
                 if (name.equals(ChatActivityNew.userName)) {
