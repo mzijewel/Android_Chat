@@ -224,7 +224,7 @@ public class ChatActivityNew extends AppCompatActivity {
         String userName = getIntent().getStringExtra("user_name");
         email = getIntent().getStringExtra("email");
 
-        Utils.log("CHAT:" + fromUser);
+        Utils.log("CHAT:" + fromUser + ":" + mUserId);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
@@ -389,9 +389,9 @@ public class ChatActivityNew extends AppCompatActivity {
             @Override
             public void onSuccess(List<QuerySnapshot> querySnapshots) {
                 messagesList.clear();
-                Utils.log("d:" + querySnapshots.size());
-//                for (QuerySnapshot querySnapshotDoc : querySnapshots)
-                for (DocumentChange doc : querySnapshots.get(0).getDocumentChanges()) {
+
+                for (QuerySnapshot querySnapshotDoc : querySnapshots)
+                    for (DocumentChange doc : querySnapshotDoc.getDocumentChanges()) {
 
                         if (doc.getType() == DocumentChange.Type.ADDED) {
                             MessageNew2 message = doc.getDocument().toObject(MessageNew2.class);
@@ -411,8 +411,6 @@ public class ChatActivityNew extends AppCompatActivity {
 
     private void loadMessages() {
         messagesList.clear();
-        fromUser = mAuth.getCurrentUser().getUid();
-
 
         mFirestore.collection("messages").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override

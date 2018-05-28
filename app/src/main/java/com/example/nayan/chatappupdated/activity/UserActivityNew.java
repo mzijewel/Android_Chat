@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.model.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
@@ -33,6 +34,7 @@ public class UserActivityNew extends AppCompatActivity {
     private UserAdapter adapter;
     private List<User> users;
     private FirebaseFirestore mFirestore;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +60,21 @@ public class UserActivityNew extends AppCompatActivity {
         adapter = new UserAdapter(this, users);
         mUsersList.setAdapter(adapter);
 
+        mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         prepareDis();
 
     }
 
     private void prepareDis() {
+
         mFirestore.collection("Users").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 
                 for (DocumentChange doc : documentSnapshots.getDocumentChanges()) {
                     User user = doc.getDocument().toObject(User.class);
+                    if (user.userId.equals(mUserId)) continue;
 
                     if (doc.getType() == DocumentChange.Type.ADDED) {
                         users.add(user);
