@@ -34,19 +34,19 @@ public class RegistrationActvityNew extends AppCompatActivity {
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     FloatingActionButton fab;
     CardView cvAdd;
-    private EditText editTextUsername, editTextPassword, editTextRepeatPassword, edtName;
+    private EditText edtEmail, editTextPassword, editTextRepeatPassword, edtName;
     private FirebaseFirestore mFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_new2);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        cvAdd = (CardView) findViewById(R.id.cv_add);
-        editTextUsername = (EditText) findViewById(R.id.et_username);
-        editTextPassword = (EditText) findViewById(R.id.et_password);
-        editTextRepeatPassword = (EditText) findViewById(R.id.et_repeatpassword);
-        edtName = (EditText) findViewById(R.id.edtName);
+        fab = findViewById(R.id.fab);
+        cvAdd = findViewById(R.id.cv_add);
+        edtEmail = findViewById(R.id.et_username);
+        editTextPassword = findViewById(R.id.et_password);
+        editTextRepeatPassword = findViewById(R.id.et_repeatpassword);
+        edtName = findViewById(R.id.edtName);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ShowEnterAnimation();
         }
@@ -148,17 +148,18 @@ public class RegistrationActvityNew extends AppCompatActivity {
     }
 
     public void clickRegister(View view) {
-        String username = editTextUsername.getText().toString();
+        String email = edtEmail.getText().toString();
         String password = editTextPassword.getText().toString();
         String repeatPassword = editTextRepeatPassword.getText().toString();
         String name = edtName.getText().toString();
-//        String displayName=username.substring(0, username.indexOf("@"));
-        if (validate(username, password, repeatPassword)) {
+
+//        String displayName=email.substring(0, email.indexOf("@"));
+        if (validate(email, password, repeatPassword)) {
 
 
-            Utils.savePref("UserEmail", username);
+            Utils.savePref("UserEmail", email);
             Intent data = new Intent();
-            data.putExtra(StaticConfig.STR_EXTRA_USERNAME, username);
+            data.putExtra(StaticConfig.STR_EXTRA_EMAIL, email);
             data.putExtra(StaticConfig.STR_EXTRA_PASSWORD, password);
             data.putExtra(StaticConfig.STR_EXTRA_NAME, name);
             data.putExtra(StaticConfig.STR_EXTRA_ACTION, STR_EXTRA_ACTION_REGISTER);
@@ -169,13 +170,7 @@ public class RegistrationActvityNew extends AppCompatActivity {
         }
     }
 
-    /**
-     * Validate email, pass == re_pass
-     *
-     * @param emailStr
-     * @param password
-     * @return
-     */
+
     private boolean validate(String emailStr, String password, String repeatPassword) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
         return password.length() > 0 && repeatPassword.equals(password) && matcher.find();

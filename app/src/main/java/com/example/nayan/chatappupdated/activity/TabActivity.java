@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.fragment.FriendsFragmentNew;
 import com.example.nayan.chatappupdated.fragment.UserProfileFragmentNew;
-import com.example.nayan.chatappupdated.service.ServiceUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,13 +50,13 @@ public class TabActivity extends AppCompatActivity {
         setContentView(R.layout.tab_activity);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle("ChatApp");
         }
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
         initTab();
         initFirebase();
 
@@ -81,7 +80,7 @@ public class TabActivity extends AppCompatActivity {
     private void online() {
         mUserId = mAuth.getCurrentUser().getUid();
         Map<String, Object> userMap = new HashMap<>();
-        userMap.put("online", "true");
+        userMap.put("online", true);
         mFirestore.collection("Users").document(mUserId).update(userMap);
     }
 
@@ -90,7 +89,7 @@ public class TabActivity extends AppCompatActivity {
 
         if (currentUser != null) {
             Map<String, Object> userMap = new HashMap<>();
-            userMap.put("online", "false");
+            userMap.put("online", false);
 
             mFirestore.collection("Users").document(mUserId).update(userMap);
 
@@ -104,7 +103,7 @@ public class TabActivity extends AppCompatActivity {
     }
 
     private void initTab() {
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorIndivateTab));
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -115,22 +114,20 @@ public class TabActivity extends AppCompatActivity {
     private void setupTabIcons() {
         int[] tabIcons = {
                 R.drawable.ic_tab_person,
-//                R.drawable.ic_tab_group,
                 R.drawable.ic_tab_infor
         };
 
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-//        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new FriendsFragmentNew(), STR_FRIEND_FRAGMENT);
-//        adapter.addFrag(new ChatsFragment(), "chat");
-//        adapter.addFrag(new GroupFragment(), STR_GROUP_FRAGMENT);
+
         adapter.addFrag(new UserProfileFragmentNew(), STR_INFO_FRAGMENT);
-//        floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(0)).onClickFloatButton.getInstance(this));
+
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -141,20 +138,7 @@ public class TabActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                ServiceUtils.stopServiceFriendChat(TabActivity.this.getApplicationContext(), false);
-//                if (adapter.getItem(position) instanceof FriendsFragment) {
-//                    floatButton.setVisibility(View.VISIBLE);
-//                    floatButton.setOnClickListener(((FriendsFragment) adapter.getItem(position)).onClickFloatButton.getInstance(TabActivity.this));
-//                    floatButton.setImageResource(R.drawable.plus);
-//                }
-////                else if (adapter.getItem(position) instanceof GroupFragment) {
-////                    floatButton.setVisibility(View.VISIBLE);
-////                    floatButton.setOnClickListener(((GroupFragment) adapter.getItem(position)).onClickFloatButton.getInstance(MainActivity.this));
-////                    floatButton.setImageResource(R.drawable.ic_float_add_group);
-////                }
-//                else {
-//                    floatButton.setVisibility(View.GONE);
-//                }
+
             }
 
             @Override
@@ -163,45 +147,6 @@ public class TabActivity extends AppCompatActivity {
             }
         });
     }
-
-
-    //    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == REQUEST_CODE_LOGIN && resultCode == RESULT_OK) {
-//            if (data.getStringExtra(STR_EXTRA_ACTION).equals(LoginActivity.STR_EXTRA_ACTION_LOGIN)) {
-//                authUtils.signIn(data.getStringExtra(STR_EXTRA_USERNAME), data.getStringExtra(STR_EXTRA_PASSWORD));
-//            } else if (data.getStringExtra(STR_EXTRA_ACTION).equals(RegisterActivity.STR_EXTRA_ACTION_REGISTER)) {
-//                authUtils.createUser(data.getStringExtra(STR_EXTRA_USERNAME), data.getStringExtra(STR_EXTRA_PASSWORD));
-//            }else if(data.getStringExtra(STR_EXTRA_ACTION).equals(LoginActivity.STR_EXTRA_ACTION_RESET)){
-//                authUtils.resetPassword(data.getStringExtra(STR_EXTRA_USERNAME));
-//            }
-//        } else if (resultCode == RESULT_CANCELED) {
-//            this.finish();
-//        }
-//    }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.about) {
-//            Toast.makeText(this, "ChatApp version 1.0", Toast.LENGTH_LONG).show();
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
 
     @Override
@@ -225,13 +170,16 @@ public class TabActivity extends AppCompatActivity {
             Intent settingsIntent = new Intent(TabActivity.this, FriendRequiestActivity.class);
             startActivity(settingsIntent);
 
-        }
-
-        if (item.getItemId() == R.id.main_all_btn) {
+        } else if (item.getItemId() == R.id.main_all_btn) {
 
             Intent settingsIntent = new Intent(TabActivity.this, UserActivityNew.class);
             startActivity(settingsIntent);
 
+        } else if (item.getItemId() == R.id.main_logout_btn) {
+            mAuth.signOut();
+            offline();
+            Intent settingsIntent = new Intent(TabActivity.this, LoginActivityNew.class);
+            startActivity(settingsIntent);
         }
 
         return true;

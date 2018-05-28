@@ -37,7 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         User user = users.get(position);
         holder.tvName.setText(user.name);
 
-        if (user.online.equals("true"))
+        if (user.online)
             holder.imgStatus.setImageResource(R.drawable.online_icon);
         else
             holder.imgStatus.setVisibility(View.GONE);
@@ -47,6 +47,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
+
+        if(users==null)return 0;
         return users.size();
     }
 
@@ -65,7 +67,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mContext.startActivity(new Intent(mContext, ChatActivityNew.class));
+                    Intent intent = new Intent(mContext, ChatActivityNew.class);
+                    intent.putExtra("fromUser", users.get(getAdapterPosition()).userId);
+                    mContext.startActivity(intent);
                 }
             });
         }

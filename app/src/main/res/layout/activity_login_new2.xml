@@ -57,12 +57,9 @@
                         android:id="@+id/et_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/selector_bg_edit"
                         android:hint="@string/Username"
                         android:inputType="textEmailAddress"
-                        android:paddingBottom="2dp"
                         android:textColor="#2fa881"
-                        android:textCursorDrawable="@drawable/bg_input_cursor"
                         android:textSize="13sp" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -83,12 +80,9 @@
                         android:id="@+id/et_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/selector_bg_edit"
                         android:hint="@string/Password"
                         android:inputType="textPassword"
-                        android:paddingBottom="10dp"
                         android:textColor="#2fa881"
-                        android:textCursorDrawable="@drawable/bg_input_cursor"
                         android:textSize="13sp" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -103,11 +97,9 @@
                     android:id="@+id/bt_go"
                     android:layout_width="150dp"
                     android:layout_height="50dp"
-                    android:background="@drawable/bt_shape"
-                    android:stateListAnimator="@drawable/state_list_animator_z"
+                    android:onClick="clickLogin"
                     android:text="@string/go"
-                    android:textColor="#d3d3d3"
-                    android:onClick="clickLogin"/>
+                    android:textColor="#fff" />
             </RelativeLayout>
 
             <TextView
@@ -115,10 +107,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
+                android:onClick="clickResetPassword"
                 android:text="@string/forgot_your_password"
                 android:textColor="#9a9a9a"
-                android:textSize="12sp"
-                android:onClick="clickResetPassword"/>
+                android:textSize="12sp" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -129,10 +121,9 @@
         android:layout_alignEnd="@id/cv"
         android:layout_alignTop="@id/cv"
         android:layout_marginEnd="-20dp"
+        android:onClick="onRegister"
         android:layout_marginTop="25dp"
-        android:onClick="clickRegisterLayout"
         android:src="@drawable/ic_signup"
-        android:transitionName="loginFab"
         app:fabSize="normal" />
 
 </RelativeLayout>

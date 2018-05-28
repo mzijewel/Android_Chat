@@ -36,7 +36,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +69,7 @@ public class ChatActivityNew extends AppCompatActivity {
     public static String mCurrentUserId;
     private final List<MessageNew2> messagesList = new ArrayList<>();
     public Bitmap bitmapAvataUser;
-    FirebaseAnalytics firebaseAnalytics;
+
     private Toolbar mChatToolbar;
     private DatabaseReference mRootRef;
     private TextView mTitleView;
@@ -108,8 +107,8 @@ public class ChatActivityNew extends AppCompatActivity {
 
         mFirestore = FirebaseFirestore.getInstance();
         mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mChatMessageView = (EmojiconEditText) findViewById(R.id.chat_message_view);
-        emojiButton = (ImageView) findViewById(R.id.emoji_btn);
+        mChatMessageView = findViewById(R.id.chat_message_view);
+        emojiButton = findViewById(R.id.emoji_btn);
         final View rootView = findViewById(R.id.root_view);
 
         // Give the topmost view of your activity layout hierarchy. This will be used to measure soft keyboard height
@@ -207,13 +206,9 @@ public class ChatActivityNew extends AppCompatActivity {
             }
         });
 
-        imgSelect = (ImageView) findViewById(R.id.imgSelect);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        firebaseAnalytics.setCurrentScreen(this, "ChatAct", " acticity");
-        firebaseAnalytics.setUserProperty("nayan", "nayan");
-//        analytics("one", "chatactivity");
+        imgSelect = findViewById(R.id.imgSelect);
 
-        mChatToolbar = (Toolbar) findViewById(R.id.chat_app_bar);
+        mChatToolbar = findViewById(R.id.chat_app_bar);
         setSupportActionBar(mChatToolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -229,6 +224,8 @@ public class ChatActivityNew extends AppCompatActivity {
         String userName = getIntent().getStringExtra("user_name");
         email = getIntent().getStringExtra("email");
 
+        Utils.log("CHAT:" + fromUser);
+
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View action_bar_view = inflater.inflate(R.layout.chat_custom_bar, null);
 
@@ -236,9 +233,9 @@ public class ChatActivityNew extends AppCompatActivity {
 
         //---- Custom Action bar Items ----
 
-        mTitleView = (TextView) findViewById(R.id.custom_bar_title);
-        mLastSeenView = (TextView) findViewById(R.id.custom_bar_seen);
-        customBarImage = (CircleImageView) findViewById(R.id.custom_bar_image);
+        mTitleView = findViewById(R.id.custom_bar_title);
+        mLastSeenView = findViewById(R.id.custom_bar_seen);
+        customBarImage = findViewById(R.id.custom_bar_image);
 
         customBarImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,8 +280,8 @@ public class ChatActivityNew extends AppCompatActivity {
 
         mAdapter = new MessageAdapter(messagesList);
 
-        mMessagesList = (RecyclerView) findViewById(R.id.messages_list);
-        mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.message_swipe_layout);
+        mMessagesList = findViewById(R.id.messages_list);
+        mRefreshLayout = findViewById(R.id.message_swipe_layout);
         mLinearLayout = new LinearLayoutManager(this);
 
         mMessagesList.setHasFixedSize(true);
@@ -297,86 +294,6 @@ public class ChatActivityNew extends AppCompatActivity {
 
 
         mTitleView.setText(userName);
-
-//        mRootRef.child("user").child(mChatUser).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                String online = dataSnapshot.child("online").getValue().toString();
-//                String image = dataSnapshot.child("avatar").getValue().toString();
-//
-//                if (!image.equals(StaticConfig.STR_DEFAULT_BASE64)) {
-//                    byte[] decodedString = Base64.decode(image, Base64.DEFAULT);
-//                    bitmapAvataUser = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-//                } else {
-//                    bitmapAvataUser = null;
-//                }
-//
-//                if (bitmapAvataUser != null) {
-//                    customBarImage.setImageBitmap(bitmapAvataUser);
-//                }
-//
-//                if (online.equals("true")) {
-//
-//                    mLastSeenView.setText("Online");
-//
-//                } else {
-//
-//                    GetTimeAgo getTimeAgo = new GetTimeAgo();
-//
-//                    long lastTime = Long.parseLong(online);
-//
-//                    String lastSeenTime = getTimeAgo.getTimeAgo(lastTime, getApplicationContext());
-//
-//                    mLastSeenView.setText(lastSeenTime);
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
-
-//        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                if (!dataSnapshot.hasChild(mChatUser)) {
-//
-//                    Map chatAddMap = new HashMap();
-//                    chatAddMap.put("seen", false);
-//                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
-//
-//                    Map chatUserMap = new HashMap();
-//                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mChatUser, chatAddMap);
-//                    chatUserMap.put("Chat/" + mChatUser + "/" + mCurrentUserId, chatAddMap);
-//
-//                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//
-//                            if (databaseError != null) {
-//
-//                                Log.d("CHAT_LOG", databaseError.getMessage().toString());
-//
-//                            }
-//
-//                        }
-//                    });
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
 
 
         mChatSendBtn.setOnClickListener(new View.OnClickListener() {
@@ -426,15 +343,6 @@ public class ChatActivityNew extends AppCompatActivity {
     }
 
 
-    public void analytics(String id, String name) {
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -466,19 +374,25 @@ public class ChatActivityNew extends AppCompatActivity {
 
     private void checkUpcoming() {
 
-        Task task1 = mFirestore.collection("messages")
+        Task incoming = mFirestore.collection("messages")
                 .whereEqualTo("from", fromUser)
-                .whereEqualTo("to", "a")
+                .whereEqualTo("to", mUserId)
                 .get();
-        Task task2 = mFirestore.collection("messages").whereEqualTo("to", fromUser).whereEqualTo("from", "a").get();
+        Task outgoing = mFirestore.collection("messages")
+                .whereEqualTo("to", fromUser)
+                .whereEqualTo("from", mUserId)
+                .get();
 
-        Task<List<QuerySnapshot>> all = Tasks.whenAllSuccess(task1, task2);
+
+        Task<List<QuerySnapshot>> all = Tasks.whenAllSuccess(incoming, outgoing);
         all.addOnSuccessListener(new OnSuccessListener<List<QuerySnapshot>>() {
             @Override
             public void onSuccess(List<QuerySnapshot> querySnapshots) {
                 messagesList.clear();
-                for (QuerySnapshot querySnapshotDoc : querySnapshots)
-                    for (DocumentChange doc : querySnapshotDoc.getDocumentChanges()) {
+                Utils.log("d:" + querySnapshots.size());
+//                for (QuerySnapshot querySnapshotDoc : querySnapshots)
+                for (DocumentChange doc : querySnapshots.get(0).getDocumentChanges()) {
+
                         if (doc.getType() == DocumentChange.Type.ADDED) {
                             MessageNew2 message = doc.getDocument().toObject(MessageNew2.class);
                             messagesList.add(message);
@@ -489,13 +403,15 @@ public class ChatActivityNew extends AppCompatActivity {
                     }
             }
         });
+
+
         mRefreshLayout.setRefreshing(false);
         mLinearLayout.scrollToPositionWithOffset(messagesList.size(), 0);
     }
 
     private void loadMessages() {
         messagesList.clear();
-        fromUser = "jewel";
+        fromUser = mAuth.getCurrentUser().getUid();
 
 
         mFirestore.collection("messages").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
@@ -508,61 +424,24 @@ public class ChatActivityNew extends AppCompatActivity {
 
         mRefreshLayout.setRefreshing(false);
         mLinearLayout.scrollToPositionWithOffset(messagesList.size(), 0);
-//        DatabaseReference messageRef = mRootRef.child("messages").child(mCurrentUserId).child(mChatUser);
-//
-//        Query messageQuery = messageRef.limitToLast(mCurrentPage * TOTAL_ITEMS_TO_LOAD);
-//
-//
-//        messageQuery.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//
-//                MessageNew2 message = dataSnapshot.getValue(MessageNew2.class);
-//
-//                itemPos++;
-//
-//                if (itemPos == 1) {
-//
-//                    String messageKey = dataSnapshot.getKey();
-//
-//                    mLastKey = messageKey;
-//                    mPrevKey = messageKey;
-//
-//                }
-//
-//                messagesList.add(message);
-//                mAdapter.notifyDataSetChanged();
-//
-//                mMessagesList.scrollToPosition(messagesList.size() - 1);
-
-//                mRefreshLayout.setRefreshing(false);
-
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
     }
 
     private void sendMessage() {
+        String message = mChatMessageView.getText().toString();
+
+        if (!TextUtils.isEmpty(message)) {
+            Map<String, Object> msg = new HashMap<>();
+
+            msg.put("from", mUserId);
+            msg.put("to", fromUser);
+            msg.put("message", message);
+
+
+            mFirestore.collection("messages").document().set(msg);
+        }
+    }
+
+    private void sendMessage1() {
 
         String message = mChatMessageView.getText().toString();
 

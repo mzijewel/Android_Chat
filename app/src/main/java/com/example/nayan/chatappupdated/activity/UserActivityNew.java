@@ -50,7 +50,7 @@ public class UserActivityNew extends AppCompatActivity {
         mUsersDatabase.keepSynced(true);
         mLayoutManager = new LinearLayoutManager(this);
 
-        mUsersList = (RecyclerView) findViewById(R.id.users_list);
+        mUsersList = findViewById(R.id.users_list);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(mLayoutManager);
 
@@ -63,7 +63,7 @@ public class UserActivityNew extends AppCompatActivity {
     }
 
     private void prepareDis() {
-        mFirestore.collection("Users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mFirestore.collection("Users").addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
 

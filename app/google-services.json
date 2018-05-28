@@ -15,12 +15,24 @@
       },
       "oauth_client": [
         {
+          "client_id": "190702864504-tehfarh5hr4ut78b70f0h81rb3hsalfj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nayan.chatappupdated",
+            "certificate_hash": "7e6614cc0bc4cfd0922c4a45b62ec664e3d31d30"
+          }
+        },
+        {
           "client_id": "190702864504-tr5e3m637hcv6ifo4rs4ao5b16vejhhs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.nayan.chatappupdated",
             "certificate_hash": "3b9265f4d0fd9d0ceea07b925993835c5c4ffaf7"
           }
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
@@ -73,6 +85,58 @@
             "package_name": "mydictionary.techienerdbd.com.fcm",
             "certificate_hash": "7e6614cc0bc4cfd0922c4a45b62ec664e3d31d30"
           }
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRqmywGfxUK-3OuS5IXNKEmDcdyga-QBw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190702864504:android:2b0de91d83b7f169",
+        "android_client_info": {
+          "package_name": "mydictionary.techienerdbd.com.firebasephoneverification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190702864504-1063f8eoa66drgnset45nshfspo35m7j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mydictionary.techienerdbd.com.firebasephoneverification",
+            "certificate_hash": "3b9265f4d0fd9d0ceea07b925993835c5c4ffaf7"
+          }
+        },
+        {
+          "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "190702864504-i2eo5r0tk4hgepmg9usbklim0e81j5bp.apps.googleusercontent.com",
