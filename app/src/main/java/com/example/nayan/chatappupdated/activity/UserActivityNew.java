@@ -10,8 +10,6 @@ import android.support.v7.widget.Toolbar;
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.model.User;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +27,7 @@ public class UserActivityNew extends AppCompatActivity {
     public Bitmap bitmapAvataUser;
     private Toolbar mToolbar;
     private RecyclerView mUsersList;
-    private DatabaseReference mUsersDatabase;
+
     private LinearLayoutManager mLayoutManager;
     private UserAdapter adapter;
     private List<User> users;
@@ -48,8 +46,7 @@ public class UserActivityNew extends AppCompatActivity {
         getSupportActionBar().setTitle("All Users");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("user");
-        mUsersDatabase.keepSynced(true);
+
         mLayoutManager = new LinearLayoutManager(this);
 
         mUsersList = findViewById(R.id.users_list);

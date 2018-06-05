@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +36,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -71,7 +66,7 @@ public class ChatActivityNew extends AppCompatActivity {
     public Bitmap bitmapAvataUser;
 
     private Toolbar mChatToolbar;
-    private DatabaseReference mRootRef;
+
     private TextView mTitleView;
     //    private EditText mChatMessageView;
     private TextView mLastSeenView;
@@ -216,7 +211,7 @@ public class ChatActivityNew extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
 
-        mRootRef = FirebaseDatabase.getInstance().getReference();
+
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
 
@@ -439,56 +434,5 @@ public class ChatActivityNew extends AppCompatActivity {
         }
     }
 
-    private void sendMessage1() {
 
-        String message = mChatMessageView.getText().toString();
-
-        if (!TextUtils.isEmpty(message) || temp != null) {
-
-            String current_user_ref = "messages/" + mCurrentUserId + "/" + mChatUser;
-            String chat_user_ref = "messages/" + mChatUser + "/" + mCurrentUserId;
-
-            DatabaseReference user_message_push = mRootRef.child("messages")
-                    .child(mCurrentUserId).child(mChatUser).push();
-
-            String push_id = user_message_push.getKey();
-
-            Map messageMap = new HashMap();
-            messageMap.put("message", message);
-            messageMap.put("image", temp);
-            messageMap.put("seen", false);
-            messageMap.put("type", "text");
-            messageMap.put("time", ServerValue.TIMESTAMP);
-            messageMap.put("from", mCurrentUserId);
-
-            Map messageUserMap = new HashMap();
-            messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-            messageUserMap.put(chat_user_ref + "/" + push_id, messageMap);
-
-            mChatMessageView.setText("");
-            imgSelect.setVisibility(View.GONE);
-            temp = null;
-
-            mRootRef.child("Chat").child(mCurrentUserId).child(mChatUser).child("seen").setValue(true);
-            mRootRef.child("Chat").child(mCurrentUserId).child(mChatUser).child("timestamp").setValue(ServerValue.TIMESTAMP);
-
-            mRootRef.child("Chat").child(mChatUser).child(mCurrentUserId).child("seen").setValue(false);
-            mRootRef.child("Chat").child(mChatUser).child(mCurrentUserId).child("timestamp").setValue(ServerValue.TIMESTAMP);
-
-            mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
-                    if (databaseError != null) {
-
-                        Log.d("CHAT_LOG", databaseError.getMessage().toString());
-
-                    }
-
-                }
-            });
-
-        }
-
-    }
 }

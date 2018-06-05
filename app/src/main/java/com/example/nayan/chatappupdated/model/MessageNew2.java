@@ -5,14 +5,27 @@ package com.example.nayan.chatappupdated.model;
  */
 
 public class MessageNew2 {
-    private String message, type,image;
-    private long  time;
+    private String message, type, image, to;
+
+    private long time;
     private boolean seen;
 
     private String from;
 
     public MessageNew2(String from) {
         this.from = from;
+    }
+
+    public MessageNew2(String message, String image, String type, long time, boolean seen) {
+        this.message = message;
+        this.image = image;
+        this.type = type;
+        this.time = time;
+        this.seen = seen;
+    }
+
+    public MessageNew2() {
+
     }
 
     public String getFrom() {
@@ -23,12 +36,12 @@ public class MessageNew2 {
         this.from = from;
     }
 
-    public MessageNew2(String message,String image, String type, long time, boolean seen) {
-        this.message = message;
-        this.image = image;
-        this.type = type;
-        this.time = time;
-        this.seen = seen;
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 
     public String getMessage() {
@@ -69,9 +82,5 @@ public class MessageNew2 {
 
     public void setSeen(boolean seen) {
         this.seen = seen;
-    }
-
-    public MessageNew2(){
-
     }
 }

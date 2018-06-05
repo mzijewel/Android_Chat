@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.nayan.chatappupdated.R;
 import com.example.nayan.chatappupdated.model.MessageNew2;
+import com.example.nayan.chatappupdated.tools.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -25,9 +26,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
 
     public Bitmap bitmapAvataUser;
+    String mUserId;
     private List<MessageNew2> mMessageList;
 
-    private FirebaseAuth mAuth;
+    public MessageAdapter() {
+        mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
 
     public MessageAdapter(List<MessageNew2> mMessageList) {
         this.mMessageList = mMessageList;
@@ -48,12 +52,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         final MessageNew2 c = mMessageList.get(i);
 
-        String from_user = c.getFrom();
-        String message_type = c.getType();
+        String from = c.getFrom();
+        String to = c.getTo();
 
+        if (from.equals(mUserId)) {
+            Utils.log("from me");
+            viewHolder.relFriend.setVisibility(View.GONE);
+            viewHolder.messageText2.setText(c.getMessage());
 
-        viewHolder.messageText.setText(c.getMessage());
-//        viewHolder.messageImage.setVisibility(View.INVISIBLE);
+        } else {
+            Utils.log("from friend");
+            viewHolder.relUser.setVisibility(View.GONE);
+            viewHolder.messageText.setText(c.getMessage());
+
+        }
 
 
     }
@@ -62,7 +74,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public int getItemCount() {
         return mMessageList.size();
     }
-
 
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
